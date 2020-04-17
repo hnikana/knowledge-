@@ -1,0 +1,12 @@
+Caliberation : 
+
+
+As briefly mentioned above, undersampling causes a bias in the posterior probabilities. This is due to the characteristic of random undersampling, which downsizes the majority class by removing them randomly until both classes have the same number of observations. This makes the class distribution of the training set different from the one in the test set. So how exactly probability calibration using Bayes Minimum Risk theory works on this problem? — the basic idea of this method is trying to reduce/remove the bias caused by random undersampling by taking into the undersampling ratio β account. Let’s have a look into some definitions:
+
+https://towardsdatascience.com/how-to-calibrate-undersampled-model-scores-8f3319c1ea5b 
+
+Study about the Platt's scaling and isotonic regression 
+https://www3.nd.edu/~dial/publications/dalpozzolo2015calibrating.pdf
+https://towardsdatascience.com/probability-calibration-for-imbalanced-dataset-64af3730eaab
+
+

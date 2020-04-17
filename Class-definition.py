@@ -222,7 +222,7 @@ class Employee:
         self.pay = pay
         
     
-    @property    
+    @property 
     def email (self):
         return '{}.{}@company.com'.format(self.first, self.last)
     
@@ -242,7 +242,7 @@ class Employee:
         first, last, pay = emp_string.split('-')
         return cls(first,last,pay)
     
-    @staticmethod
+   @staticmethod 
     def is_workday(day):
         if day.weekday() == 5  or  day.weekday() == 6 :
             return False
@@ -252,7 +252,7 @@ class Employee:
         return "Employee('{}','{}','{}')".format(self.first , self.last , self.pay)
     
     def __str__(self) :
-        return '{} -{}'.format(self.fullname() , self.email) 
+        print ("{} -{}".format(self.fullname , self.email))
     
     def __add__(self, other):
         return int(self.pay) +int( other.pay )
@@ -286,11 +286,12 @@ print(emp_1.__add__(emp_3))
 
 '''
 Property Decorator - Getter , Setter and Deletter  
+Properties are accessed as attributes without parentheses. like self.email
 '''         
 
 emp_1.first = 'Jim'   
 emp_1.fullname()
-emp_1.email     # Try it first without propert Decorator 
+emp_1.email()    # Try it first without propert Decorator 
                 # here we could see that however we changed the first name, still we have the same old email addresss , how could we fix it ? 
                 #         self.email = self.first+'.'+self.last+'@company.com' , still we get the same old email address , An alternative way is to 
                 # add a method instead of an attribute , like fullname method. But it is not very useful , because , fisrt of we may need to inform any body
@@ -299,7 +300,7 @@ emp_1.email     # Try it first without propert Decorator
 # Or even we can do that for full name , sometimes people forget to put paranthesis 
                 
 
-emp_1.email () # here we could see that we face an error 
+emp_1.email# here we could see that we face an error 
 emp_1.fullname
 
 # So another issue is that , sometimes we need to give a fullname and we need to have every thing , first , last and even email address changed , how ? 
@@ -313,6 +314,143 @@ emp_1.email
 del emp_1.fullname
 
 emp_1.email # also we could define a built in function to delet the instance as well
+
+
+#=============================Built_in DECORATORS ======================================================================
+'''
+A few built-in class decorators
+Some commonly used decorators that are built into Python are @classmethod, @staticmethod, and @property. 
+The @classmethod and @staticmethod decorators are used to define methods inside a class namespace that’s not connected 
+to a particular instance of that class. The @property decorator is used to customize getters and setters for class attributes. 
+Expand the box below for an example using these decorators. You can learn more about built-in decorators here.
+
+'''
+
+class Circle:
+    def __init__(self, radius):
+        self._radius = radius
+
+    @property
+    def radius(self):
+        """Get value of radius"""
+        return self._radius
+
+    @radius.setter
+    def radius(self, value):
+        """Set radius, raise error if negative"""
+        if value >= 0:
+            self._radius = value
+        else:
+            raise ValueError("Radius must be positive")
+
+    @property
+    def area(self):
+        """Calculate area inside circle"""
+        return self.pi() * self.radius**2
+
+    def cylinder_volume(self, height):
+        """Calculate volume of cylinder with circle as base"""
+        return self.area * height
+
+    @classmethod
+    def unit_circle(cls):
+        """Factory method creating a circle with radius 1"""
+        return cls(1)
+
+    @staticmethod
+    def pi():
+        """Value of π, could use math.pi instead though"""
+        return 3.1415926535
+    
+    
+'''
+In this class:
+.cylinder_volume() is a regular method.
+.radius is a mutable property: it can be set to a different value. However, by defining a setter method, we can do some error
+ testing to make sure it’s not set to a nonsensical negative number. Properties are accessed as attributes without parentheses.
+.area is an immutable property: properties without .setter() methods can’t be changed. Even though it is defined as a method,
+ it can be retrieved as an attribute without parentheses.
+.unit_circle() is a class method. It’s not bound to a particular instance of Circle. Class methods are often used as factory 
+methods that can create specific instances of the class.
+.pi() is a static method. It’s not really dependent on the Circle class, except that it’s part of its namespace. Static methods 
+can be called on either an instance or the class.
+'''
+
+'''
+Decorating Classes  https://medium.com/better-programming/decorators-in-python-72a1d578eac4
+There are two different ways to use decorators on classes. The first is by decorating the methods of a class or decorating the whole class.
+'''
+import functools
+import time
+
+
+def timer(func): # it computes the runtime 
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        start_time = time.perf_counter()
+        value = func(*args, **kwargs)
+        end_time = time.perf_counter()
+        run_time = end_time - start_time
+        print("Finished {} in {} secs".format(repr(func.__name__), round(run_time, 3)))
+        return value
+
+    return wrapper
+
+
+@timer  # on a function 
+def doubled_and_add(num):
+    res = sum([i*2 for i in range(num)])
+    print("Result : {}".format(res))
+
+doubled_and_add(100000)
+doubled_and_add(1000000)
+
+'''
+Decorate a class method
+Here we are using a previously created timer decorator.
+'''
+
+class Calculator:
+
+    def __init__(self, num):
+        self.num = num
+
+    @timer
+    def doubled_and_add(self):
+        res = sum([i * 2 for i in range(self.num)])
+        print("Result : {}".format(res))
+
+c = Calculator(10000)
+c.doubled_and_add()
+
+'''
+output
+Result : 99990000
+Finished 'doubled_and_add' in 0.001 secs
+'''
+
+@timer
+class Calculator:
+
+    def __init__(self, num):
+        self.num = num
+        import time
+        time.sleep(2)
+
+    def doubled_and_add(self):
+        res = sum([i * 2 for i in range(self.num)])
+        print("Result : {}".format(res))
+
+c = Calculator(100)
+
+
+
+'''
+Finished 'Calculator' in 2.001 secs
+Decorating a class does not decorate its methods. Here, @timer only measures the time it takes to instantiate the class.
+'''
+
 
 
 
@@ -357,7 +495,7 @@ def dispaly():
     
 # Now we have :
 display = decorator_fun(display) 
-display()
+display() # decorator_fun(display)()
 
 del display
 
@@ -492,9 +630,32 @@ display_info('10', 'Hamed')
 #   display_info ran in : 8.082389831542969e-05 sec    it us the name of the function not  awrapper !!!!
     
     
+################################################################### arg mm kwarg 
+
+# function (farg, *arg , **kwarg) even for the inner fuctions 
 
 
 
+def multiply(number, factor=1, **kwargs):
+    return number*factor
+
+def add(number, to_add=0, **kwargs):
+    return number+to_add
+
+def multiply_add(number, **kwargs):
+    return add(multiply(number, **kwargs), **kwargs)
+
+multiply_add(5, factor=3 , to_add=200)
+
+import numpy as np
+from sklearn.model_selection import train_test_split
+
+X, y = np.arange(10).reshape((5, 2)), range(5)
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.33, random_state=42)
+    
+###############################################################################
 
 
 
