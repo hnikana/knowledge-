@@ -491,7 +491,7 @@ unittest.TextTestRunner().run(tests_loaded)
     
 class Distribution:
     
-    def __init__(self, mu=0, sigma=1):
+    def __init__(self, mu =0, sigma=1):
     
         """ Generic distribution class for calculating and 
         visualizing a probability distribution.
@@ -740,23 +740,246 @@ showing the relavative path ,
 
 Still I dont know how to import from a parent package to sub package 
 
+MAY BE we need to change the path !!!! 
+
+In order to make a package setup.py shoudl be in the same directory that the package folder exist 
+
+setup.py is necessary for installing 
+
+In order to install it , we have to go to the same directory that the package folder exist and then pip install . 
+the . (dot) tells pip to look for setup.py 
+
+no w we can use the python package like the other packages 
+
+now you might ask yourself where it is installed ? wherever the pip install packages 
+
+we can import the packag e
+
+import mypackage 
+mypackage.__file__
+
+
+if we have a python package under develpment or for educational purposes and we want to intsall it locally we may need to create a virtual envorionemnt 
+
+If you decide to install your package on your local computer, you'll want to create a virtual environment. A virtual environment is a silo-ed Python 
+installation apart from your main Python installation. That way you can install packages and delete the virtual environment without affecting your main 
+Python installation
+
+Let's talk about two different Python environment managers: conda and venv
+
+Conda
+Conda does two things: manages packages and manages environments.
+
+There are other environmental managers and package managers besides conda. For example, venv is an environment manager that comes pre-installed with Python 3.
+ Pip is a package manager.
+
+Pip can only manage Python packages.
+
+Whether you choose to create environments with venv or conda will depend on your use case. Conda is very helpful for data science projects,
+ but conda can make generic Python software development a bit more confusing; that's the case for this project.
+
+If you create a conda environment, activate the environment, and then pip install the distributions package, you'll find that the system installs 
+your package globally rather than in your local conda environment. However, if you create the conda environment and install pip simultaneously, 
+you'll find that pip behaves as expected installing packages into your local environment:
+    
+    conda create --name environmentname pip 
+    
+    
+So , for datascience stuff cond ais the best way but th eproblem is that conda cannot take care of all installation packages and for that you have to use pip 
+
+then pip would install packages globally however the created environment is activated . but we wont hav ethis problem with enve and pip , they are match and pip 
+packages in the active environment created by env 
+
+How to confirm type of installation ? 
+if we run conda list , it shows all the packages installed and shows Anaconda is the installation set up 
+or if in the terminal type paython , it would show the version and the set up installation 
+
+How to create a vurtual environemt ? 
+
+python -m env virtual-name '
+source virtual-name/bin/activate  ==> activate the virtual envirinment and if we install anythinhg using pip , then it would install in this folder of virtual
+environement instead of globally 
+
+
+SO likewise before we can move to the directory that contains our python package and setup.py and install in via pip , then it would install it withon the virtual
+envirinment 
+
+
+1- create a folder called distributions 
+2- create setup.py 
+    from setuptools import setup
+
+    setup(name='distributions',
+          version='0.1',
+          description='Gaussian distributions',
+          packages=['distributions'],
+          zip_safe=False)
+
+3- in distriburtion foder we put our modules and __init__.py , if it has sub folder within each subfolder we have to have __init__.py if we want to 
+    import them later on 
+    
+4-  Npw we can create an envoronemet inorder to avoid messing up with original python installation 
+5- we can go to the directory and say pip install . ; as I mentoned before this . (dot ) will look for setup.py and install the package and in the python shell or 
+    IDE we can just import as usuall 
+
+
+
+The reason why we put 'from .guassiandistribution import guassian' in __init__.py or even importing more ? why ?
+
+    _ technically we are saying from realtive address (.) from module guassiandistribution.py import function or class Guassina 
+    - if we dont do that also it works but we have to give it the exact address ==> where to giv eit the exact address ?
+        In our notebook , python file we are writing and we want to make use of that function for instance 
+        if it exiusted in __init__.py ==> in the python shell
+            from distribution import Guassian 
+        if it does not exist 
+            from distribution.guassiandistribution import guassian 
+            
+        This way we can make short cut and provide just useful classes for the user instaed of giving him ll the information as they might not need and make them confused
+        Right ? So , we using pip install distributions we install it and __init__.py just gives us some calsses we need 
+        
+
 
 '''
 
- 
-   
-   
+###  test.py 
+
+import unittest
+
+from distributions import Gaussian
+from distributions import Binomial
+
+class TestGaussianClass(unittest.TestCase):
+    def setUp(self):
+        self.gaussian = Gaussian(25, 2)
+        self.gaussian.read_data_file('numbers.txt')
+
+    def test_initialization(self): 
+        self.assertEqual(self.gaussian.mean, 25, 'incorrect mean')
+        self.assertEqual(self.gaussian.stdev, 2, 'incorrect standard deviation')
+
+    def test_readdata(self):
+        self.assertEqual(self.gaussian.data,\
+         [1, 3, 99, 100, 120, 32, 330, 23, 76, 44, 31], 'data not read in correctly')
+
+    def test_meancalculation(self):
+        self.assertEqual(self.gaussian.calculate_mean(),\
+         sum(self.gaussian.data) / float(len(self.gaussian.data)), 'calculated mean not as expected')
+
+    def test_stdevcalculation(self):
+        self.assertEqual(round(self.gaussian.calculate_stdev(), 2), 92.87, 'sample standard deviation incorrect')
+        self.assertEqual(round(self.gaussian.calculate_stdev(0), 2), 88.55, 'population standard deviation incorrect')
+
+    def test_pdf(self):
+        self.assertEqual(round(self.gaussian.pdf(25), 5), 0.19947,\
+         'pdf function does not give expected result') 
+        self.gaussian.calculate_mean()
+        self.gaussian.calculate_stdev()
+        self.assertEqual(round(self.gaussian.pdf(75), 5), 0.00429,\
+        'pdf function after calculating mean and stdev does not give expected result')      
+
+    def test_add(self):
+        gaussian_one = Gaussian(25, 3)
+        gaussian_two = Gaussian(30, 4)
+        gaussian_sum = gaussian_one + gaussian_two
+        
+        self.assertEqual(gaussian_sum.mean, 55)
+        self.assertEqual(gaussian_sum.stdev, 5)
+        
+class TestBinomialClass(unittest.TestCase):
+    def setUp(self):
+        self.binomial = Binomial(0.4, 20)
+        self.binomial.read_data_file('numbers_binomial.txt')
+
+    def test_initialization(self):
+        self.assertEqual(self.binomial.p, 0.4, 'p value incorrect')
+        self.assertEqual(self.binomial.n, 20, 'n value incorrect')
+
+    def test_readdata(self):
+        self.assertEqual(self.binomial.data,\
+         [0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0], 'data not read in correctly')
+    
+    def test_calculatemean(self):
+        mean = self.binomial.calculate_mean()
+        self.assertEqual(mean, 8)
+    
+    def test_calculatestdev(self):
+        stdev = self.binomial.calculate_stdev()
+        self.assertEqual(round(stdev,2), 2.19)
+        
+    def test_replace_stats_with_data(self):
+        p, n = self.binomial.replace_stats_with_data()
+        self.assertEqual(round(p,3), .615)
+        self.assertEqual(n, 13)
+        
+    def test_pdf(self):
+        self.assertEqual(round(self.binomial.pdf(5), 5), 0.07465)
+        self.assertEqual(round(self.binomial.pdf(3), 5), 0.01235)
+    
+        self.binomial.replace_stats_with_data()
+        self.assertEqual(round(self.binomial.pdf(5), 5), 0.05439)
+        self.assertEqual(round(self.binomial.pdf(3), 5), 0.00472)
+
+    def test_add(self):
+        binomial_one = Binomial(.4, 20)
+        binomial_two = Binomial(.4, 60)
+        binomial_sum = binomial_one + binomial_two
+        
+        self.assertEqual(binomial_sum.p, .4)
+        self.assertEqual(binomial_sum.n, 80)
+        
+    
+if __name__ == '__main__':
+    unittest.main()
+
+
+'''
+Shoudl we pass the parent required argument in the child class definition, yes , if they dont have default value 
+but in super init we can use arg , kwarg ??????
+'''
+    
+'''
+PyPi vs. Test PyPi
+Python package index 
+Pypi website has test repository as well as regular repository 
+it is suggested to have an account in test and regular , first try it on to test and then publish it to the regular 
+the package to publish shoudl have the license.txt , README.md , setup.cfg
+
+setup.py 
+package folder
+    - __init__.py
+    - license.txt 
+    - setup.cfg
+    - README.md
     
     
+cd binomial_package_files
+python setup.py sdist
+pip install twine
+
+# commands to upload to the pypi test repository
+twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+pip install --index-url https://test.pypi.org/simple/ dsnd-probability
+
+# command to upload to the pypi repository
+twine upload dist/*
+pip install dsnd-probability
+
+
+INTERESTING : if you are upload a package with a underscore in ithe name , so the package will be uploaded and the underscore 
+will be replaced by dash 
+
+Whatever goes to init file , it would be called under the name of package 
+
+INTERESTING : when we import from a module , under the hood , the python run the module and put every function and class 
+into a  Dicttionary and then just called whatever you wat and ut them into the cash 
+SCENARIO 1 : 
+    the module has some error like indention or something else but the function or class
+    we want to import is OK , it fails to import because python runs it first all of it 
+SCENARIO 2 :
+    If the module contains something like print ('') or any action , nut just function or class definition 
+    they woule be rin as well
     
-    
-    
-    
-    
-    
-    
-    
-    
+'''
     
     
     

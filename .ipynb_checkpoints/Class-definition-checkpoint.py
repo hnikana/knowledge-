@@ -57,12 +57,6 @@ We can change the static variable of a class by calling
 Also, we van just change a static variable of an instance by calling
  instance.static_variable = something , in that case just that instance will have
  its static_vatriable changed. 
- 
- Class Variables two types , some are optional in instantiating the calss and soem is not necessary but later on will be aused 
- for instance in the emxample above if we done define self.email right away and just put self.email = None , later we can define a function so that 
- we it put an email address to it
- def email ():
-     self.email = selef.name + self,family @ ....
 '''
 
 '''
@@ -158,15 +152,6 @@ dev_1.apply_raise()
 print(dev_1.pay)
 
 # NOw we change the class a little bit by overriding , for that we need ti initialize the class again and get the inheritance fro the parent data 
-
-'''
-
-there are two ways to init parent class 
-one use the parent class parent.__init__(self , *arg )
-another way is the super method , iun super method no need of using self .
-super().__init__(*arg)
-'''
-
 
 class Developer(Employee): # this way we have all the variable and methods of the parent class
     raise_amount = 1.10 
@@ -500,7 +485,7 @@ a = decorator_fun(display)
 def decorator_fun(original_func):
     def wrapper_fun(*arg , **kwarg):
         print ('execurion before wrapper runing {}'.format(original_func.__name__))
-        return original_func(*arg, **kwarg)
+        original_func(*arg, **kwarg)
     return wrapper_fun
 
 @decorator_fun
@@ -510,7 +495,7 @@ def dispaly():
     
 # Now we have :
 display = decorator_fun(display) 
-display('hi') # decorator_fun(display)()
+display() # decorator_fun(display)()
 
 del display
 
@@ -671,34 +656,11 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.33, random_state=42)
     
 ###############################################################################
-'''
-https://realpython.com/primer-on-python-decorators/#first-class-objects
-
-'''
-
-import functools
-
-def decorator(func):
-    @functools.wraps(func)
-    def wrapper_decorator(*args, **kwargs):
-        # Do something before
-        value = func(*args, **kwargs)
-        # Do something after
-        return value
-    return wrapper_decorator
 
 
 
-def deco_func(main_func):
-    print ('whatever before wrapper is doen in the definition of the main function not executation of the main function ')
-    def wrapper(*arg , **kwarg):
-        print ('before execution')
-        main_func(*arg , **kwarg)
-        print ('after execution')
-    return wrapper 
-@deco_func
-def message (msg):
-    print (msg)
-    
-message('Executing right now')
+
+
+
+
 
