@@ -807,14 +807,7 @@ envirinment
 
 1- create a folder called distributions 
 2- create setup.py 
-    from setuptools import setup
-
-    setup(name='distributions',
-          version='0.1',
-          description='Gaussian distributions',
-          packages=['distributions'],
-          zip_safe=False)
-
+     
 3- in distriburtion foder we put our modules and __init__.py , if it has sub folder within each subfolder we have to have __init__.py if we want to 
     import them later on 
     
