@@ -1,0 +1,8 @@
+GIT 
+GIT WIKI http://shorty/GitWikiGuide
+GIT MKDOC https://git.rockfin.com/pages/di-docs/di-docs/Documentation-guide/Create-a-mkdocs-site/
+        https://git.rockfin.com/pages/di-docs/di-docs/Documentation-guide/Contributing-to-a-site/
+
+
+Mark down cheat sheet 
+    https://www.markdownguide.org/cheat-sheet/
